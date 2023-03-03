@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@apollo/client": "^3.7.9",
     "@chakra-ui/react": "^2.5.1",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
@@ -20,6 +21,7 @@
     "eslint": "8.35.0",
     "eslint-config-next": "13.2.1",
     "framer-motion": "^10.0.1",
+    "graphql": "^16.6.0",
     "next": "13.2.1",
     "next-auth": "^4.19.2",
     "react": "18.2.0",
