@@ -5,6 +5,7 @@ import { Button, Center, Image, Input, Stack, Text } from "@chakra-ui/react";
 import { Session } from "next-auth";
 import { signIn } from "next-auth/react";
 import { useState } from "react";
+import { toast } from "react-hot-toast";
 
 interface IAuthProps {
   session: Session | null;
@@ -13,19 +14,33 @@ interface IAuthProps {
 
 const Auth: React.FC<IAuthProps> = ({ session, reloadSession }) => {
   const [username, setUsername] = useState("");
-  const [createUsername, { data, loading, error }] = useMutation<
+  const [createUsername] = useMutation<
     CreateUsernameData,
     CreateUsernameVariables
   >(userOperations.Mutations.createUsername);
-
-  console.log(data, error, loading);
 
   const onSubmit = async () => {
     if (!username) return;
 
     try {
-      await createUsername({ variables: { username } });
-    } catch (error) {
+      const { data } = await createUsername({ variables: { username } });
+      if (!data?.createUsername) {
+        throw new Error();
+      }
+
+      if (data.createUsername.error) {
+        const {
+          createUsername: { error },
+        } = data;
+
+        throw new Error(error);
+      }
+
+      toast.success("Username successfully created!");
+
+      reloadSession();
+    } catch (error: any) {
+      toast.error(error.message);
       console.log(error);
     }
   };
@@ -42,7 +57,7 @@ const Auth: React.FC<IAuthProps> = ({ session, reloadSession }) => {
               onChange={(e) => setUsername(e.target.value)}
             />
             <Button onClick={onSubmit} type="submit" w="100%">
-              Submit
+              Save
             </Button>
           </>
         ) : (
