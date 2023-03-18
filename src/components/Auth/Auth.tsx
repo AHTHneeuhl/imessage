@@ -14,7 +14,7 @@ interface IAuthProps {
 
 const Auth: React.FC<IAuthProps> = ({ session, reloadSession }) => {
   const [username, setUsername] = useState("");
-  const [createUsername] = useMutation<
+  const [createUsername, { loading }] = useMutation<
     CreateUsernameData,
     CreateUsernameVariables
   >(userOperations.Mutations.createUsername);
@@ -56,7 +56,12 @@ const Auth: React.FC<IAuthProps> = ({ session, reloadSession }) => {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
             />
-            <Button onClick={onSubmit} type="submit" w="100%">
+            <Button
+              onClick={onSubmit}
+              type="submit"
+              w="100%"
+              isLoading={loading}
+            >
               Save
             </Button>
           </>
