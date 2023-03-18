@@ -1,3 +1,4 @@
+import { useLazyQuery } from "@apollo/client";
 import {
   Button,
   Input,
@@ -10,6 +11,8 @@ import {
   Stack,
 } from "@chakra-ui/react";
 import { useState } from "react";
+import UserOperations from "@/graphql/operations/user";
+import { SearchUsersData, SearchUsersInput } from "@/utils/types";
 
 interface IModalProps {
   isOpen: boolean;
@@ -18,9 +21,14 @@ interface IModalProps {
 
 const ConversationModal: React.FC<IModalProps> = ({ isOpen, onClose }) => {
   const [username, setUsername] = useState("");
+  const [searchUsers, { data, error, loading }] = useLazyQuery<
+    SearchUsersData,
+    SearchUsersInput
+  >(UserOperations.Queries.searchUsers);
 
-  const handleSearch = async (e: React.FormEvent) => {
+  const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
+    searchUsers({ variables: { username } });
   };
 
   return (
