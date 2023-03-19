@@ -1,4 +1,4 @@
-import { useLazyQuery } from "@apollo/client";
+import { useLazyQuery, useMutation } from "@apollo/client";
 import {
   Button,
   Input,
@@ -12,22 +12,43 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import UserOperations from "@/graphql/operations/user";
-import { SearchedUser, SearchUsersData, SearchUsersInput } from "@/utils/types";
+import ConversationOperations from "@/graphql/operations/conversation";
+import {
+  CreateConversationData,
+  CreateConversationInput,
+  SearchedUser,
+  SearchUsersData,
+  SearchUsersInput,
+} from "@/utils/types";
 import UserSearchList from "./UserSearchList";
 import Participants from "./Participants";
+import { toast } from "react-hot-toast";
+import { Session } from "next-auth";
 
 interface IModalProps {
+  session: Session;
   isOpen: boolean;
   onClose: () => void;
 }
 
-const ConversationModal: React.FC<IModalProps> = ({ isOpen, onClose }) => {
+const ConversationModal: React.FC<IModalProps> = ({
+  isOpen,
+  onClose,
+  session,
+}) => {
+  const {
+    user: { id: userId },
+  } = session;
   const [username, setUsername] = useState("");
   const [participants, setParticipants] = useState<SearchedUser[]>([]);
-  const [searchUsers, { data, error, loading }] = useLazyQuery<
+  const [searchUsers, { data, loading }] = useLazyQuery<
     SearchUsersData,
     SearchUsersInput
   >(UserOperations.Queries.searchUsers);
+  const [createConversation, { loading: createConversationLoading }] =
+    useMutation<CreateConversationData, CreateConversationInput>(
+      ConversationOperations.Mutations.createConversation
+    );
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,6 +62,18 @@ const ConversationModal: React.FC<IModalProps> = ({ isOpen, onClose }) => {
 
   const removeParticipant = (userId: string) => {
     setParticipants((prev) => prev.filter((p) => p.id !== userId));
+  };
+
+  const onCreateConversation = async () => {
+    const participantIds = [userId!, ...participants.map((p) => p.id)];
+    try {
+      const { data } = await createConversation({
+        variables: { participantIds },
+      });
+    } catch (error: any) {
+      console.log("onCreateConversation Error", error);
+      toast.error(error?.message);
+    }
   };
 
   return (
@@ -69,10 +102,22 @@ const ConversationModal: React.FC<IModalProps> = ({ isOpen, onClose }) => {
             />
           ) : null}
           {participants.length ? (
-            <Participants
-              participants={participants}
-              removeParticipant={removeParticipant}
-            />
+            <>
+              <Participants
+                participants={participants}
+                removeParticipant={removeParticipant}
+              />
+              <Button
+                bg="brand.100"
+                width="100%"
+                mt="6"
+                _hover={{ bg: "brand.100" }}
+                isLoading={createConversationLoading}
+                onClick={() => {}}
+              >
+                Create Conversation
+              </Button>
+            </>
           ) : null}
         </ModalBody>
       </ModalContent>

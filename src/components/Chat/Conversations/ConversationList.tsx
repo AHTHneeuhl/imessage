@@ -24,7 +24,7 @@ const ConversationList: React.FC<IConversationListProps> = ({ session }) => {
           Find or start a conversation
         </Text>
       </Box>
-      <ConversationModal isOpen={isOpen} onClose={onClose} />
+      <ConversationModal isOpen={isOpen} onClose={onClose} session={session} />
     </Box>
   );
 };
