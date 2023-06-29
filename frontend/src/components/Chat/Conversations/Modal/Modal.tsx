@@ -1,3 +1,12 @@
+import ConversationOperations from "@/graphql/operations/conversation";
+import UserOperations from "@/graphql/operations/user";
+import {
+  CreateConversationData,
+  CreateConversationInput,
+  SearchUsersData,
+  SearchUsersInput,
+  SearchedUser,
+} from "@/utils/types";
 import { useLazyQuery, useMutation } from "@apollo/client";
 import {
   Button,
@@ -10,21 +19,12 @@ import {
   ModalOverlay,
   Stack,
 } from "@chakra-ui/react";
-import { useState } from "react";
-import UserOperations from "@/graphql/operations/user";
-import ConversationOperations from "@/graphql/operations/conversation";
-import {
-  CreateConversationData,
-  CreateConversationInput,
-  SearchedUser,
-  SearchUsersData,
-  SearchUsersInput,
-} from "@/utils/types";
-import UserSearchList from "./UserSearchList";
-import Participants from "./Participants";
-import { toast } from "react-hot-toast";
 import { Session } from "next-auth";
 import { useRouter } from "next/router";
+import { useState } from "react";
+import { toast } from "react-hot-toast";
+import Participants from "./Participants";
+import UserSearchList from "./UserSearchList";
 
 interface IModalProps {
   session: Session;
