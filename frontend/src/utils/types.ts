@@ -1,3 +1,5 @@
+import { ConversationPopulated } from "../../../backend/src/utils/types";
+
 /**
  * User
  */
@@ -28,6 +30,11 @@ export interface SearchedUser {
 /**
  * Conversation
  */
+
+export interface ConversationData {
+  conversations: Array<ConversationPopulated>;
+}
+
 export interface CreateConversationData {
   createConversation: {
     conversationId: string;
