@@ -1,11 +1,1 @@
-## iMessage frontend
-
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
+## IMessage - Full Stack Real Time Chat Application
