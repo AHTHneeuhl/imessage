@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-const ConversationFields = gql`
+const ConversationFields = `
   conversations {
     id
     participants {
@@ -39,8 +39,58 @@ const ConversationOperations = {
         }
       }
     `,
+    markConversationAsRead: gql`
+      mutation MarkConversationAsRead(
+        $userId: String!
+        $conversationId: String!
+      ) {
+        markConversationAsRead(userId: $userId, conversationId: $conversationId)
+      }
+    `,
+    deleteConversation: gql`
+      mutation deleteConversation($conversationId: String!) {
+        deleteConversation(conversationId: $conversationId)
+      }
+    `,
+    updateParticipants: gql`
+      mutation UpdateParticipants(
+        $conversationId: String!
+        $participantIds: [String]!
+      ) {
+        updateParticipants(
+          conversationId: $conversationId
+          participantIds: $participantIds
+        )
+      }
+    `,
   },
-  Subscriptions: {},
+  Subscriptions: {
+    conversationCreated: gql`
+      subscription ConversationCreated {
+        conversationCreated {
+          ${ConversationFields}
+        }
+      }
+    `,
+    conversationUpdated: gql`
+      subscription ConversationUpdated {
+        conversationUpdated {
+          conversation {
+            ${ConversationFields}
+          }
+          addedUserIds
+          removedUserIds
+        }
+      }
+    `,
+    conversationDeleted: gql`
+      subscription ConversationDeleted {
+        conversationDeleted {
+          id
+        }
+      }
+    `,
+  },
 };
 
 export default ConversationOperations;
